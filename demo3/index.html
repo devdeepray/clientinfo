@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="application/javascript">
+
+var absolutePath = function(href) {
+    var link = document.createElement("a");
+    link.href = href;
+    return (link.protocol+"//"+link.host+link.pathname+link.search+link.hash);
+}
+
+function replace_url(elem, attr) {
+    var elems = document.getElementsByTagName(elem);
+    var r = new RegExp('^(?:[a-z]+:)?//', 'i'); // regex for relative URL
+    for (var i = 0; i < elems.length; i++) {
+        var oldpath = elems[i].getAttribute(attr);
+        var link = document.createElement('a');
+        link.setAttribute('href', elems[i][attr]);
+        if (!r.test(oldpath)) {
+          elems[i][attr] = link.protocol + "//" + "dom." + link.hostname + ":" + link.port + link.pathname + link.search; 
+        }
+        link = null;
+    }
+}
+
+function loadIPAndMungeURL() {
+    replace_url('a', 'href');
+    replace_url('img', 'src');
+}
+</script> 
+
+</head>
+<body onload="loadIPAndMungeURL()">
+
+<h1>URL munging example</h1>
+
+<p> We can get IP from lookup service. Public IP is </p>
+
+<p id="demo"></p>
+
+<p><a href="files/page1.html">page1</a></p>
+<p><a href="files/page2.html">page2</a></p>
+<p><a href="files/page3.html">page3</a></p>
+<p><a href="files/page4.html">page4</a></p>
+
+<script type="application/javascript">
+  function getIP(json) {
+    pubIP = json.ip;
+    document.getElementById('demo').innerHTML = json.ip;
+  }
+</script>
+
+<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+
+</body>
+</html>
