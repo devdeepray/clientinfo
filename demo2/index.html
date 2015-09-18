@@ -10,6 +10,15 @@ var absolutePath = function(href) {
 }
 
 function replace_url(elem, attr) {
+    // Here, we need to detect URLS that are relative, and munge them iff they are in the plain domain.
+    // One solution to do this is keep a special starting prefix, which determines whether this is a 
+    // modified domain or the original domain.
+    var link = document.createElement("a");
+    link.href = window.location.href;
+    alert(link.host.substring(0,3));
+    if (link.host.substring(0,3) == "gtm") {
+      return;
+    }
     var elems = document.getElementsByTagName(elem);
     var r = new RegExp('^(?:[a-z]+:)?//', 'i'); // regex for relative URL
     for (var i = 0; i < elems.length; i++) {
@@ -17,7 +26,7 @@ function replace_url(elem, attr) {
         var link = document.createElement('a');
         link.setAttribute('href', elems[i][attr]);
         if (!r.test(oldpath)) {
-          elems[i][attr] = link.protocol + "//" + "dom." + link.hostname + ":" + link.port + link.pathname + link.search; 
+          elems[i][attr] = link.protocol + "//" + "gtm_cityname." + link.hostname + ":" + link.port + link.pathname + link.search; 
         }
         link = null;
     }
